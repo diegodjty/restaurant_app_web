@@ -1,7 +1,7 @@
 import React from 'react';
 
-const NewDish = () => {
-  return <div>NewDish</div>;
+const Newdish = () => {
+  return <h1>New Dish</h1>;
 };
 
-export default NewDish;
+export default Newdish;

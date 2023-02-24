@@ -1,7 +1,19 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Menu = () => {
-  return <div>Menu</div>;
+  return (
+    <>
+      <h1 className="text-3xl font-light mb-4">Menu</h1>
+      <Link
+        to="/new-dish"
+        className="bg-blue-800 inline-block mb5
+       p-2 text-white uppercase font-bold "
+      >
+        New Dish
+      </Link>
+    </>
+  );
 };
 
 export default Menu;
