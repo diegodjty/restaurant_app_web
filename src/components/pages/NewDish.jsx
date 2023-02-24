@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { collection, addDoc } from 'firebase/firestore';
+import { db, storage } from '../../config/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useNavigate } from 'react-router-dom';
+import { v4 } from 'uuid';
 
 const Newdish = () => {
+  const [imgUpload, setImgUpload] = useState(null);
+  const [uploadingImg, setUploadingImg] = useState(false);
+
+  // Storage
+
+  const navigate = useNavigate();
+
   // Validate and read data from from
   const formik = useFormik({
     initialValues: {
@@ -17,13 +29,28 @@ const Newdish = () => {
         .min(3, 'Minumum 3 characters')
         .required('Name is required'),
       price: Yup.number().min(1, 'Add a price').required('Price is required'),
+      image: Yup.string().required('Image required'),
       category: Yup.string().required('Category is required'),
       description: Yup.string()
         .min(10, 'Minumum 10 characters')
         .required('Description is required'),
     }),
-    onSubmit: (data) => {
-      console.log(data);
+    onSubmit: (dish) => {
+      let image = '';
+      //Reference to image and give it a random name
+      const imgRef = ref(storage, `products/${imgUpload.name + v4()}`);
+      uploadBytes(imgRef, imgUpload).then((snapshot) => {
+        getDownloadURL(snapshot.ref)
+          .then((url) => {
+            image = url;
+          })
+          .then(() => {
+            dish.inStock = true;
+            dish.image = image;
+            addDoc(collection(db, 'products'), dish);
+            navigate('/');
+          });
+      });
     },
   });
   return (
@@ -132,8 +159,12 @@ const Newdish = () => {
               <input
                 type="file"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                accept="image/*"
                 id="image"
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setImgUpload(e.target.files[0]);
+                }}
                 value={formik.values.image}
                 onBlur={formik.handleBlur}
               />
@@ -166,7 +197,7 @@ const Newdish = () => {
             ) : null}
             <input
               type="submit"
-              className="bg-gray-800 hover:bg-gray-900 w-full mt-5 p-2 text-white uppercase font-bold"
+              className="bg-gray-800 hover:bg-gray-900 w-full mt-5 p-2 text-white uppercase font-bold pointer"
               value={'Add Dish'}
             />
           </form>
