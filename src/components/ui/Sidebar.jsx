@@ -10,7 +10,6 @@ const Sidebar = () => {
         <p className="mt-3 text-gray-600">Manage Your Restaurant</p>
         <nav>
           <NavLink
-            exac
             to="/"
             className={({ isActive }) =>
               (isActive ? 'text-yellow-500 ' : 'text-gray-400') +
@@ -24,7 +23,6 @@ const Sidebar = () => {
               (isActive ? 'text-yellow-500 ' : 'text-gray-400') +
               ' p-1 block hover:bg-yellow-500 hover:text-gray-900'
             }
-            exac
             to="/menu"
           >
             Menu
